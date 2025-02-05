@@ -1,0 +1,184 @@
+/* 기본 리셋 */
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+#aiModel {
+  font-size: 30px;
+}
+#hText {
+  font-size: 50px;
+  color: #fff;
+}
+
+/* 전체 배경 및 기본 폰트 */
+
+@font-face {
+  font-family: "MyCuteFont";
+  src: url("font/Cafe24Ssurround-v2.0.woff") format("woff2"),
+    url("font/Cafe24Ssurround-v2.0.woff") format("woff");
+  font-weight: normal;
+  font-style: normal;
+}
+
+#sel {
+  font-family: "MyCuteFont", sans-serif;
+}
+
+#textarea {
+  font-family: "MyCuteFont", sans-serif;
+}
+
+body {
+  font-family: "MyCuteFont", sans-serif;
+  background-image: url(img/bobSang.jpeg);
+  background-size: cover;
+  color: #000000;
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+/* 헤더 스타일 */
+header {
+  background-color: #da971c;
+  padding: 1rem;
+  text-align: center;
+}
+
+header button {
+  font-family: "MyCuteFont", sans-serif;
+  background-color: #1c78ce;
+  color: #ffffff;
+  border: none;
+  padding: 0.5rem 1rem;
+  font-size: 1rem;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+header button:hover {
+  font-family: "MyCuteFont", sans-serif;
+  background-color: #ac265d;
+}
+
+/* 메인 컨텐츠 영역 - Flex 컨테이너 */
+main {
+    font-family: "MyCuteFont", sans-serif;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 1rem;
+}
+
+/* 폼 스타일 */
+form#controller {
+    font-family: "MyCuteFont", sans-serif;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  max-width: 600px;
+  background-color: #ffffff;
+  border: 5px solid #303030;
+  padding: 1.5rem;
+  margin-bottom: 1rem;
+  border-radius: 8px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+form#controller label,
+form#controller textarea,
+form#controller select,
+form#controller button {
+    font-family: "MyCuteFont", sans-serif;
+  width: 100%;
+  margin: 0.5rem 0;
+}
+
+form#controller textarea {
+    font-family: "MyCuteFont", sans-serif;
+  height: 100px;
+  padding: 0.5rem;
+  font-size: 1rem;
+  resize: vertical;
+}
+
+form#controller button {
+  font-family: "MyCuteFont", sans-serif;
+  background-color: #303030;
+  color: white;
+  border: none;
+  padding: 0.8rem;
+  border-radius: 5px;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+form#controller button:hover {
+  background-color: #52d139;
+}
+
+/* 결과 컨테이너 - Flex 레이아웃 */
+#container {
+    font-family: "MyCuteFont", sans-serif;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 1rem;
+  width: 100%;
+  padding: 1rem;
+}
+
+/* 각 결과 카드 스타일 */
+#container > div {
+  font-family: "MyCuteFont", sans-serif;
+  background-color: #fff;
+  border: 5px solid #303030;
+  color: #000000;
+  font-size: 20px;
+  border-radius: 8px;
+  padding: 1rem;
+  width: calc(33.333% - 2rem);
+  min-width: 280px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.05);
+}
+
+#container > div p {
+  font-family: "MyCuteFont", sans-serif;
+  margin-bottom: 0.5rem;
+  text-align: center;
+}
+
+#container > div div {
+  font-family: "MyCuteFont", sans-serif;
+  width: 100%;
+  margin-bottom: 0.5rem;
+  text-align: center;
+}
+
+#container > div button {
+  font-family: "MyCuteFont", sans-serif;
+  background-color: #303030;
+  color: white;
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 5px;
+  cursor: pointer;
+  text-align: center;
+  transition: background-color 0.3s;
+  margin-top: auto;
+}
+
+#container > div button:hover {
+  font-family: "MyCuteFont", sans-serif;
+  background-color: #d32f2f;
+}

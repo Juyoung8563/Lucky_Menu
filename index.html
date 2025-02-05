@@ -1,160 +1,194 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
+    
+<!-- OG Tag -->
+    <meta property="og:title" content="🍽️ 식사하쇼" />
+    <meta property="og:description" content="밥은 먹고 다니냐...?" />
+    <meta property="og:image" content="..." />
+
+    <!-- Favicon -->
+    <link
+      rel="icon"
+      type="image/png"
+      href="./img/favicon-96x96.png"
+      sizes="96x96"
+    />
+    <link rel="icon" type="image/svg+xml" href="./img/favicon.svg" />
+    <link rel="shortcut icon" href="./img/favicon.ico" />
+    <link
+      rel="apple-touch-icon"
+      sizes="180x180"
+      href="./img/apple-touch-icon.png"
+    />
+
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>점심 메뉴 추천</title>
+    <!-- 외부 스타일시트 불러오기 -->
+    <link rel="stylesheet" href="style.css" />
+    <title>🍽️ 점심 메뉴 추천</title>
   </head>
   <body>
     <header>
-      <button id="resetButton">저장된 데이터 리셋</button>
+      <div id="hText">🍚 메뉴 추천! 🍱</div>
+      <br />
+      <button id="resetButton">🗑️ 저장된 데이터 리셋</button>
     </header>
-    <form id="controller">
-      <label>
-        모델 :
-        <select name="modelOption">
-          <option value="1">gemini-1.5-flash</option>
-          <option value="2">deepseek-r1</option>
-        </select>
-      </label>
-      <textarea name="textData"></textarea>
-      <button>등록</button>
-    </form>
-    <div id="container"></div>
 
+    <main>
+      <form id="controller">
+        <label>
+          <div id="aiModel">🤖 AI 모델을 선택하세요</div>
+          <br />
+          <select id="sel" name="modelOption">
+            <option value="1">gemini-1.5-flash</option>
+            <option value="2">deepseek-r1-distill-llama-70b</option>
+          </select>
+        </label>
+        <textarea id="textarea"
+          name="textData"
+          placeholder="메시지를 입력하세요! 🍝"
+          required
+        ></textarea>
+        <button type="submit">등록 🍴</button>
+      </form>
+      <div id="container"></div>
+    </main>
+    <div style="color: white; font-size: 20px">
+      서버는 강사님의 서버... 온몸을 비틀어도 고칠 수 없었음... 😭
+    </div>
     <script>
       const _ = () => {
-        // 요소들 (HTML 태그)을 JavaScript로 가져옴
+        // HTML 요소 선택
         const container = document.querySelector("#container");
         const form = document.querySelector("#controller");
         const resetButton = document.querySelector("#resetButton");
 
-        // "저장된 데이터 리셋" 버튼 클릭 시, 데이터를 비움
-        resetButton.addEventListener("click", () => (data.length = 0));
-
-        // 데이터를 저장할 변수 'data' - 'Proxy'를 사용하여 데이터가 변경될 때마다 화면 갱신
+        // 데이터 배열을 Proxy로 감싸서 변경 시 화면 및 로컬 스토리지가 갱신되도록 함
         const data = new Proxy([], {
           set(target, property, value) {
-            target[property] = value; // 배열에 값 저장
-            updateContainer(); // 화면 업데이트
-            updateStorage(target); // 브라우저 로컬 스토리지에 데이터 저장
+            target[property] = value;
+            updateContainer();
+            updateStorage(target);
             return true;
           },
         });
 
-        // 페이지가 로드될 때, 저장된 데이터를 불러오기
+        // 페이지 로드시 로컬 스토리지에 저장된 데이터를 불러옴
         function onMounted() {
-          data.push(...(JSON.parse(localStorage.getItem("myData")) ?? []));
+          const stored = JSON.parse(localStorage.getItem("myData"));
+          if (stored) {
+            data.push(...stored);
+          }
         }
         onMounted();
 
-        // 화면을 최신 상태로 업데이트하는 함수
+        // 화면 갱신 함수
         function updateContainer() {
-          container.innerHTML = ""; // 기존 화면 비우기
-          for (const d of data) {
-            const tmp = document.createElement("div");
-            tmp.textContent = d.text;
+          container.innerHTML = "";
+          data.forEach((d) => {
+            const div = document.createElement("div");
 
-            // "삭제" 버튼을 생성하여 클릭 시 해당 데이터를 삭제하도록 설정
-            const deleteButton = document.createElement("button");
-            deleteButton.textContent = "삭제";
-            deleteButton.addEventListener("click", () => {
-              const filtered = data.filter((value) => value.id !== d.id); // 삭제할 데이터 제외
-              data.length = 0;
-              data.push(...filtered); // 삭제 후 다시 저장
-            });
+            // 입력 메시지 표시
+            const p = document.createElement("p");
+            p.textContent = d.text;
+            div.appendChild(p);
 
-            // 답변이 있을 경우, 답변을 표시
+            // 답변이 있을 경우 표시
             if (d.reply) {
               const box = document.createElement("div");
-              const reply = document.createElement("code");
-              box.appendChild(reply);
-              box.style.padding = "12px";
-              box.style.margin = "4px";
-              box.style.backgroundColor = "beige";
-              box.style.border = "1px solid black";
-              reply.textContent = d.reply;
-              tmp.appendChild(box);
+              const code = document.createElement("code");
+              code.textContent = d.reply;
+              box.appendChild(code);
+              div.appendChild(box);
             }
 
-            tmp.appendChild(deleteButton);
-            container.appendChild(tmp); // 화면에 추가
-          }
+            // 삭제 버튼 생성
+            const deleteButton = document.createElement("button");
+            deleteButton.textContent = "삭제 ❌";
+            deleteButton.addEventListener("click", () => {
+              const filtered = data.filter((value) => value.id !== d.id);
+              data.length = 0;
+              data.push(...filtered);
+              updateContainer();
+            });
+            div.appendChild(deleteButton);
+            container.appendChild(div);
+          });
         }
 
-        // 데이터를 로컬 스토리지에 저장하는 함수
+        // 로컬 스토리지 업데이트 함수
         function updateStorage(target) {
-          localStorage.setItem("myData", JSON.stringify(target)); // 데이터 저장
+          localStorage.setItem("myData", JSON.stringify(target));
         }
 
-        // 폼이 제출될 때 실행되는 함수
+        // 폼 제출 핸들러
         async function handleForm(event) {
-          event.preventDefault(); // 폼 제출 시 페이지 리로드 방지
-          const formData = new FormData(form); // 폼 데이터 가져오기
-          const text = formData.get("textData"); // 텍스트 데이터 가져오기
+          event.preventDefault();
+          const formData = new FormData(form);
+          const text = formData.get("textData");
           let reply;
+          const modelOption = formData.get("modelOption");
 
-          // 선택한 모델에 따라 다른 방식으로 답변 생성
-          switch (formData.get("modelOption")) {
+          // 선택된 모델에 따라 API 호출
+          switch (modelOption) {
             case "1":
-              reply = `👬 Gemini : ${await makeReply(text)}`; // Gemini 모델 사용
+              reply = `👬 Gemini : ${await makeReply(text)}`;
               break;
             case "2":
-              reply = `👀 DeepSeek : ${await makeReply2(text)}`; // DeepSeek 모델 사용
+              reply = `👀 DeepSeek : ${await makeReply2(text)}`;
               break;
             default:
-              alert("비정상적인 접근!"); // 에러 처리
-              throw new Error("알 수 없는 에러!");
+              alert("비정상적인 접근!");
+              throw new Error("알 수 없는 모델 옵션입니다.");
           }
 
-          // 새로운 데이터를 배열에 추가
           const displayData = {
-            id: Date.now(), // 고유 ID로 현재 시간 사용
+            id: Date.now(),
             text,
             reply,
           };
-          data.push(displayData); // 데이터 배열에 추가
+          data.push(displayData);
+          form.reset();
         }
 
-        // 첫 번째 모델에서 답변을 생성하는 함수
+        // Gemini 모델 API 호출 함수 (/1 엔드포인트)
         async function makeReply(text) {
-          const url = "https://spotted-famous-seaplane.glitch.me/1"; // API URL
+          const url = "https://spotted-famous-seaplane.glitch.me/1";
           const response = await fetch(url, {
-            method: "POST", // POST 요청
-            body: JSON.stringify({
-              text: `너는 20년 경력의 메뉴 추천 전문가야. {${text}}의 메시지를 바탕으로, 점심 메뉴를 추천해주고, 50자 이내에 평문으로 작성해줘.`,
-            }),
+            method: "POST",
+            body: JSON.stringify({ text }),
             headers: {
-              "Content-Type": "application/json", // JSON 형식의 데이터 전송
+              "Content-Type": "application/json",
             },
           });
-
-          const json = await response.json(); // JSON 응답 받기
-          return json.reply; // 모델의 답변 반환
+          const json = await response.json();
+          return json.reply;
         }
 
-        // 두 번째 모델에서 답변을 생성하는 함수
-        async function makeReply2(content) {
-          const url = "https://spotted-famous-seaplane.glitch.me/2"; // API URL
+        // DeepSeek 모델 API 호출 함수 (/2 엔드포인트)
+        async function makeReply2(text) {
+          const url = "https://spotted-famous-seaplane.glitch.me/2";
           const response = await fetch(url, {
-            method: "POST", // POST 요청
-            body: JSON.stringify({
-              text: `너는 20년 경력의 메뉴 추천 전문가야. {${content}}의 메시지를 바탕으로, 점심 메뉴를 추천해주고, 50자 이내에 평문으로 작성해줘. 결과는 한글로 작성해줘.`,
-            }),
+            method: "POST",
+            body: JSON.stringify({ text }),
             headers: {
-              "Content-Type": "application/json", // JSON 형식의 데이터 전송
+              "Content-Type": "application/json",
             },
           });
-
-          const json = await response.json(); // JSON 응답 받기
-          return json.reply; // 모델의 답변 반환
+          const json = await response.json();
+          return json.reply;
         }
 
-        // 폼 제출 이벤트 리스너
         form.addEventListener("submit", handleForm);
+        resetButton.addEventListener("click", () => {
+          data.length = 0;
+          updateStorage(data);
+          updateContainer();
+        });
       };
 
-      window.onload = _; // 페이지 로드 후 코드 실행
+      window.onload = _;
     </script>
   </body>
 </html>
